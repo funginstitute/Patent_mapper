@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+	body {font: 12px Arial;}
+
+	path {	
+		stroke: steelblue;
+		stroke-width:2;
+		fill: lightblue;
+	}
+
+	.axis path,
+	.axis line {
+		fill: none;
+		stroke: grey;
+		stroke-width: 1;
+		shape-rendering: crispEdges;
+	}
+
+</style>
+
+<body>
+<p style="color:lightblue; text-align:center;">Sample count for application year</p>
+<script type="text/javascript" src="d3/d3.v3.min.js"></script>
+
+<script>
+
+	var margin = {top:30, right:20, bottom:30, left:50},
+	    width = 600 - margin.left - margin.right,
+	    height = 270 - margin.top - margin.bottom;
+
+	var parseDate = d3.time.format("%Y").parse;
+
+	var x = d3.time.scale().range([0, width]);
+	var y = d3.scale.linear().range([height, 0]);
+
+	var xAxis = d3.svg.axis().scale(x)
+	    .orient("bottom").ticks(10);
+
+	var yAxis = d3.svg.axis().scale(y)
+	    .orient("right").ticks(5);
+
+	var valueline = d3.svg.line()
+	    .x(function(d) {return x(d.date); })
+	    .y(function(d) {return y(d.close); });
+
+	var svg = d3.select("body")
+	    .append("svg")
+		.attr("width", width + margin.left + margin.right)
+		.attr("height", height + margin.top + margin.bottom)
+	    .append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.right + ")");
+
+	//Get the data
+	d3.tsv("data/count.tsv", function(error, data) {
+		data.forEach(function(d) {
+			d.date = parseDate(d.date);
+			d.close = +d.close;
+		});
+		
+		data.sort(function(a, b) {
+			var x = a.date < b.date? -1:1;
+			return x;
+		});
+	
+		//Scale the range of the data
+		x.domain(d3.extent(data, function(d) {return d.date;}));
+		y.domain(d3.extent(data, function(d) {return d.close;}));
+
+		svg.append("path")
+			.attr("d", valueline(data));
+
+		svg.append("g")
+			.attr("class", "x axis")
+			.attr("transform", "translate(0," + height + ")") 
+			.call(xAxis);
+		
+		svg.append("text")
+			.attr("transform", "translate(" + (width/2) + "," + (height + margin.bottom) + ")")
+			.style("text-anchor","middle")
+			.text("Application Year");
+
+		svg.append("g")
+			.attr("class", "y axis")
+			.call(yAxis);
+		
+		svg.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("y", 0 - margin.left)
+			.attr("x", 0 - (height/2))
+			.attr("dy", "1em")
+			.style("text-anchor", "middle")
+			.text("Count");		
+
+
+
+	});
+</script>
+</body>
