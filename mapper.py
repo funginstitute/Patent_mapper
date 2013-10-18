@@ -8,12 +8,18 @@ from flask import Flask, redirect, url_for, Response,  make_response, request, c
 from werkzeug import secure_filename
 from datetime import timedelta
 from functools import update_wrapper
+from flask import render_template
 
 UPLOAD_FOLDER = './'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+@app.route('/index')
+def hello(name=None):
+    return render_template('index.html')
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -104,7 +110,9 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+    print request.method, request
     if request.method == 'POST':
+        print request
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
