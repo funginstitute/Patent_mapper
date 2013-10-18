@@ -39,6 +39,11 @@ img.drag {
 	margin: 20px 0px;
 	text-align:center;
 }
+
+#upload {
+	margin: 20px 0px;
+	text-align:center;
+}
 .mainspan {
 	position: relative;
 }
@@ -74,3 +79,7 @@ img.drag {
   stroke: lightblue;
   stroke-width: 1.5px;
 }
+
+
+
+

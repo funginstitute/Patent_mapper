@@ -1,11 +1,19 @@
 import sqlite3
-from flask import Flask
-from flask import Response
+import csv
+import sys
+import os
+import json
+import re
+from flask import Flask, redirect, url_for, Response,  make_response, request, current_app
+from werkzeug import secure_filename
 from datetime import timedelta
-from flask import make_response, request, current_app
 from functools import update_wrapper
 
+UPLOAD_FOLDER = './'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -81,14 +89,53 @@ def patent(state, year, cla):
       #select Patent, Longitude, Latitude from (select * from invpat where State = "{state}" and AppYear = {year}) group by Latitude, Longitude;
       results = c.fetchall()
       d = dict(zip([x[0] for x in results],[x[1:] for x in results]))
-    
       jsonout = json.dumps(d, indent=4)
       if 'callback' in request.args:
         jsonout = "{callback}({json})".format(callback=request.args["callback"], json=jsonout)
       elif 'jsonp' in request.args:
         jsonout = "{callback}({json})".format(callback=request.args["jsonp"], json=jsonout)
       return Response(jsonout, mimetype="application/json")
-      
+
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file',
+                                    filename=filename))
+    return 
+
+
+def parse():
+  f = open('test.csv', 'rb')
+  conn = sqlite3.connect('/Users/kevshin2/d3js_projects/webserver/invpat.sqlite3')
+  c = conn.cursor()
+  results = []
+  for line in f:
+  # sys.stdout.write(line)
+    li = line[:-2]
+    #print li
+    c.execute('''
+      select Patent, Longitude, Latitude, Lastname, Firstname, Assignee from invpat where Patent = "0{pat}";
+      '''.format(pat=li))
+    results += c.fetchall()
+  d = dict(zip([x[0] for x in results],[x[1:] for x in results]))
+  jsonout = json.dumps(d, indent=4)
+  if 'callback' in request.args:
+    jsonout = "{callback}({json})".format(callback=request.args["callback"], json=jsonout)
+  elif 'jsonp' in request.args:
+    jsonout = "{callback}({json})".format(callback=request.args["jsonp"], json=jsonout)
+  return Response(jsonout, mimetype="application/json")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
