@@ -1,0 +1,105 @@
+#selector, #yearSelect {
+			top: 50px;
+			left: 1024px;
+			height: 20px;
+			width: 118px;
+			color: black;
+			margin-bottom:20px;
+			#margin-right:25px;
+		}
+
+		#header {
+			width: 100%; 
+			overflow: hidden;
+
+		}
+
+		#label {
+			width: 500px; 
+			float: left;
+		}
+
+		.container {
+			margin-left: 510px;
+			color:black;
+			margin-bottom: 10px;
+			position:relative;
+			font-family: 'PTSerifRegular',serif;
+			font-size:32px;
+			width:30%;
+		}
+
+
+		#draggable {
+			float:right;
+			top:40px; 
+			right:40px; 
+			z-index:2000; 
+			width:300px; 
+			height:300px; 
+			padding:10px;
+			font-size:10px; 
+			font-family:sans-serif;
+			border:3px solid;
+			background-color:rgba(255,255,255,0.86);
+		}
+
+
+
+		#state {
+			text-align: center;
+			margin-bottom:20px;
+		}
+		#yearsize, #clasize, #statesize{
+			font-size:15px;
+		}
+
+		#forclass, #foryear, #cla, #click, #sta{
+			text-align:center;
+		}
+
+		#img {
+			margin-left:25px;
+		}
+		
+
+		#click {
+			margin-top:20px;
+			text-align:center;
+		}
+
+		 
+		body, #map {
+			left: 2px;
+		  	width: 98%;
+		  	height: 100%;
+		 	padding: 0px;
+		 	position:absolute;
+		 	background-color: #f5f5ed;
+		}
+
+		#map {
+			left:10px;
+	        border-style: solid;
+	        border-color: #ccc #ccc #999 #ccc;
+	        -webkit-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+	        -moz-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+	        box-shadow: rgba(64, 64, 64, 0.1) 0 2px 5px;
+		}
+		 
+		.stations, .stations svg {
+		  position: absolute;
+		}
+		 
+		.stations svg {
+		  width: 60px;
+		  height: 20px;
+		  padding-right: 100px;
+		  font: 10px sans-serif;
+		}
+		 
+		.stations circle {
+		  fill: red;
+		  stroke: lightblue;
+		  stroke-width: 1.5px;
+		}
